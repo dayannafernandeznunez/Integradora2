@@ -1,0 +1,57 @@
+/**
+ * Class representing a referee in the tournament.
+ */
+public class Referee {
+    private String name;
+    private int experienceLevel;
+
+    /**
+     * Constructor for the Referee class.
+     * @param name The name of the referee.
+     * @param experienceLevel The experience level of the referee.
+     */
+    public Referee(String name, int experienceLevel) {
+        setName(name);
+        setExperienceLevel(experienceLevel);
+    }
+
+    /**
+     * Gets the name of the referee.
+     * @return The name of the referee.
+     */
+    public String getName() {
+        return name;
+    }
+
+    /**
+     * Sets the name of the referee.
+     * @param name The name to set.
+     * @throws IllegalArgumentException if the name is null or empty.
+     */
+    public void setName(String name) {
+        if (name == null || name.trim().isEmpty()) {
+            throw new IllegalArgumentException("Referee name cannot be empty.");
+        }
+        this.name = name;
+    }
+
+    /**
+     * Gets the experience level of the referee.
+     * @return The experience level.
+     */
+    public int getExperienceLevel() {
+        return experienceLevel;
+    }
+
+    /**
+     * Sets the experience level of the referee.
+     * @param experienceLevel The experience level to set.
+     * @throws IllegalArgumentException if the experience level is less than 1.
+     */
+    public void setExperienceLevel(int experienceLevel) {
+        if (experienceLevel < 1) {
+            throw new IllegalArgumentException("Experience level must be greater than or equal to 1.");
+        }
+        this.experienceLevel = experienceLevel;
+    }
+}

@@ -1,0 +1,181 @@
+package model;
+
+import java.util.*;
+
+public class Tournament {
+    private List<Team> teams;
+    private List<Referee> referees;
+    private Match[][] fixture;  // Matriz de partidos
+    private int currentMatchIndex;
+
+    public Tournament() {
+        teams = new ArrayList<>();
+        referees = new ArrayList<>();
+        fixture = new Match[8][8];  // Asumiendo 8 equipos para el ejemplo
+        currentMatchIndex = 0;
+    }
+
+    // Métodos para agregar equipos, jugadores y árbitros
+    public void addTeam(String teamName, String country, String coach) {
+        Team team = new Team(teamName, country, coach);
+        teams.add(team);
+    }
+
+    public void addPlayerToTeam(String teamName, String playerName, int number) {
+        for (Team team : teams) {
+            if (team.getName().equals(teamName)) {
+                Player player = new Player(playerName, number);
+                team.addPlayer(player);
+                break;
+            }
+        }
+    }
+
+    public void addReferee(String refereeName, String refereeType) {
+        RefereeType type = RefereeType.valueOf(refereeType.toUpperCase());
+        Referee referee = new Referee(refereeName, type);
+        referees.add(referee);
+    }
+
+    // Generar Fixture
+    public void generateFixture() {
+        int matchIndex = 0;
+        for (int i = 0; i < teams.size(); i++) {
+            for (int j = i + 1; j < teams.size(); j++) {
+                fixture[matchIndex / 8][matchIndex % 8] = new Match(teams.get(i), teams.get(j));
+                matchIndex++;
+            }
+        }
+    }
+
+    // Mostrar Fixture
+    public void showFixture() {
+        for (int i = 0; i < fixture.length; i++) {
+            for (int j = 0; j < fixture[i].length; j++) {
+                if (fixture[i][j] != null) {
+                    System.out.println(fixture[i][j].getMatchInfo());
+                }
+            }
+        }
+    }
+
+    // Asignar árbitros a los partidos
+    public void assignReferees() {
+        int refereeIndex = 0;
+        for (int i = 0; i < fixture.length; i++) {
+            for (int j = 0; j < fixture[i].length; j++) {
+                if (fixture[i][j] != null) {
+                    fixture[i][j].setReferee(referees.get(refereeIndex));
+                    refereeIndex = (refereeIndex + 1) % referees.size();
+                }
+            }
+        }
+    }
+
+    // Registrar resultado de un partido
+    public void registerMatchResult(int matchIndex, int score1, int score2) {
+        int row = matchIndex / 8;
+        int col = matchIndex % 8;
+        if (fixture[row][col] != null) {
+            fixture[row][col].setScore(score1, score2);
+        }
+    }
+
+    // Registrar gol
+    public void registerGoal(int matchIndex, String playerName, String assistantName) {
+        int row = matchIndex / 8;
+        int col = matchIndex % 8;
+        if (fixture[row][col] != null) {
+            fixture[row][col].registerGoal(playerName, assistantName);
+        }
+    }
+
+    // Registrar tarjeta
+    public void registerCard(int matchIndex, String playerName, CardType cardType) {
+        int row = matchIndex / 8;
+        int col = matchIndex % 8;
+        if (fixture[row][col] != null) {
+            fixture[row][col].registerCard(playerName, cardType);
+        }
+    }
+
+    // Mostrar clasificación por grupo
+    public void showGroupStandings() {
+        for (Team team : teams) {
+            System.out.println(team.getName() + " - Puntos: " + team.getPoints());
+        }
+    }
+
+    // Mostrar máximo goleador
+    public void showTopScorer() {
+        Player topScorer = null;
+        int maxGoals = 0;
+        for (Team team : teams) {
+            for (Player player : team.getPlayers()) {
+                if (player.getGoals() > maxGoals) {
+                    maxGoals = player.getGoals();
+                    topScorer = player;
+                }
+            }
+        }
+        System.out.println("Máximo goleador: " + topScorer.getName());
+    }
+
+    // Mostrar equipo con Fair Play
+    public void showFairPlayTeam() {
+        Team fairPlayTeam = null;
+        int minCards = Integer.MAX_VALUE;
+        for (Team team : teams) {
+            int teamCards = team.getTotalCards();
+            if (teamCards < minCards) {
+                minCards = teamCards;
+                fairPlayTeam = team;
+            }
+        }
+        System.out.println("Equipo con Fair Play: " + fairPlayTeam.getName());
+    }
+
+    // Calcular eficiencia de equipos
+    public void calculateTeamEfficiency() {
+        for (Team team : teams) {
+            System.out.println(team.getName() + " - Eficiencia: " + team.calculateEfficiency());
+        }
+    }
+
+    // Calcular eficiencia de jugadores
+    public void calculatePlayerEfficiency() {
+        for (Team team : teams) {
+            for (Player player : team.getPlayers()) {
+                System.out.println(player.getName() + " - Eficiencia: " + player.calculateEfficiency());
+            }
+        }
+    }
+
+    // Calcular índice de tarjetas de árbitros
+    public void calculateRefereeCardIndex() {
+        for (Referee referee : referees) {
+            System.out.println(referee.getName() + " - Índice de tarjetas: " + referee.getCardIndex());
+        }
+    }
+
+    public int getMatchesCount() {
+        return fixture.length * fixture[0].length;
+    }
+
+    // Métodos adicionales de Tournament
+    public void simulateMatch(int matchIndex) {
+        Random rand = new Random();
+        int score1 = rand.nextInt(5);  // Puntuación aleatoria entre 0 y 4
+        int score2 = rand.nextInt(5);  // Puntuación aleatoria entre 0 y 4
+        registerMatchResult(matchIndex, score1, score2);
+        System.out.println("Resultado del partido: " + score1 + " - " + score2);
+    }
+
+    public void displayTournamentSummary() {
+        System.out.println("Resumen del Torneo:");
+        showFixture();
+        showGroupStandings();
+        showTopScorer();
+        showFairPlayTeam();
+    }
+}

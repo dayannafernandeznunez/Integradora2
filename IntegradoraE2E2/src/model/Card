@@ -1,0 +1,19 @@
+package model;
+
+public class Card {
+    private String playerName;
+    private CardType cardType;
+
+    public Card(String playerName, CardType cardType) {
+        this.playerName = playerName;
+        this.cardType = cardType;
+    }
+
+    public String getPlayerName() {
+        return playerName;
+    }
+
+    public CardType getCardType() {
+        return cardType;
+    }
+}
